@@ -1,19 +1,25 @@
-project:
-  type: website
+on:
+  workflow_dispatch:
+  push:
+    branches: main
 
-website:
-  title: "another_quarto"
-  navbar:
-    left:
-      - href: index.qmd
-        text: Home
-      - about.qmd
+name: Quarto Publish
 
-format:
-  html:
-    theme: cosmo
-    css: styles.css
-    toc: true
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
 
-editor: visual
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
 
+      - name: Render and Publish
+        uses: quarto-dev/quarto-actions/publish@v2
+        with:
+          target: gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
